@@ -1,0 +1,54 @@
+{
+  "name": "ShadowSwap Extended List",
+  "timestamp": "2022-01-26T11:45:09Z",
+  "version": {
+    "major": 2,
+    "minor": 3,
+    "patch": 0
+  },
+  "tags": {},
+  "logoURI": "https://shadowswap.xyz/logo.png",
+  "keywords": ["shadow", "extended"],
+  "tokens": [
+    {
+      "name": "Wrapped CORE",
+      "symbol": "WCORE",
+      "address": "0x191E94fa59739e188dcE837F7f6978d84727AD01",
+      "chainId": 1116,
+      "decimals": 18,
+      "logoURI": "https://shadowswap.xyz/images/tokens/0x191E94fa59739e188dcE837F7f6978d84727AD01.png"
+    },
+    {
+      "name": "ShadowSwap Token",
+      "symbol": "SHDW",
+      "address": "0xddBa66C1eBA873e26Ac0215Ca44892a07d83aDF5",
+      "chainId": 1116,
+      "decimals": 18,
+      "logoURI": "https://shadowswap.xyz/images/tokens/0xddBa66C1eBA873e26Ac0215Ca44892a07d83aDF5.png"
+    },
+    {
+      "name": "Core Inu",
+      "symbol": "CINU",
+      "address": "0x6e35ff7ac8eeb825ddb155515ef612adcd66bcbc",
+      "chainId": 1116,
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/SVerseLab/images/master/Coreinu.jpg"
+    },
+    {
+      "name": "AKIO Inu",
+      "symbol": "AINU",
+      "address": "0xbb790d1e8a2d34e9d846bb00ea0b0380813375ee",
+      "chainId": 1116,
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/SVerseLab/images/master/AINU.jpg"
+    },
+    {
+      "name": "CoreShib",
+      "symbol": "CSHIB",
+      "address": "0x751669F3dCE1ED1c449dE44889365E40F13ce57f",
+      "chainId": 1116,
+      "decimals": 18,
+      "logoURI": "https://raw.githubusercontent.com/SVerseLab/images/master/coreshib.png"
+    }
+  ]
+}

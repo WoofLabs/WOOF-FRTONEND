@@ -1,0 +1,102 @@
+{
+  "name": "ShadowSwap Default List",
+  "timestamp": "2022-01-26T11:45:09Z",
+  "version": {
+    "major": 2,
+    "minor": 3,
+    "patch": 0
+  },
+  "tags": {},
+  "logoURI": "https://shadowswap.xyz/logo.png",
+  "keywords": ["shadow", "default"],
+  "tokens": [
+    {
+      "name": "Wrapped CORE",
+      "symbol": "WCORE",
+      "address": "0x191E94fa59739e188dcE837F7f6978d84727AD01",
+      "chainId": 1116,
+      "decimals": 18,
+      "logoURI": "https://shadowswap.xyz/images/tokens/0x191E94fa59739e188dcE837F7f6978d84727AD01.png"
+    },
+    {
+      "name": "WoofSwap Token",
+      "symbol": "WOOF",
+      "address": "0xd4cb72ac8fb75c0178a2e3d2b87f77e2b7ead3f2",
+      "chainId": 1116,
+      "decimals": 18,
+      "logoURI": "https://i.ibb.co/r5bx1Gp/Safeimagekit-resized-img-22.png"
+    },
+    {
+      "name": "ShadowSwap Token",
+      "symbol": "SHDW",
+      "address": "0xddBa66C1eBA873e26Ac0215Ca44892a07d83aDF5",
+      "chainId": 1116,
+      "decimals": 18,
+      "logoURI": "https://shadowswap.xyz/images/tokens/0xddBa66C1eBA873e26Ac0215Ca44892a07d83aDF5.png"
+    },
+    {
+      "name": "Core Usdt",
+      "symbol": "USDT",
+      "address": "0x900101d06A7426441Ae63e9AB3B9b0F63Be145F1",
+      "chainId": 1116,
+      "decimals": 6,
+      "logoURI": "https://s2.coinmarketcap.com/static/img/coins/64x64/825.png"
+    },
+    {
+      "name": "Core Usdc",
+      "symbol": "USDC",
+      "address": "0xa4151B2B3e269645181dCcF2D426cE75fcbDeca9",
+      "chainId": 1116,
+      "decimals": 6,
+      "logoURI": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png"
+    },
+    {
+      "name": "Wrapped Eth",
+      "symbol": "WETH",
+      "address": "0xeAB3aC417c4d6dF6b143346a46fEe1B847B50296",
+      "chainId": 1116,
+      "decimals": 18,
+      "logoURI": "https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png"
+    },
+    {
+      "name": "Crust Exchange",
+      "symbol": "CRUST",
+      "address": "0x29665752a02067DdaCaA4E76faF7f8871823da1c",
+      "chainId": 1116,
+      "decimals": 18,
+      "logoURI": "https://shadowswap.xyz/images/tokens/0x29665752a02067DdaCaA4E76faF7f8871823da1c.png"
+    },
+    {
+      "name": "Crest Protocol",
+      "symbol": "CPT",
+      "address": "0xcFE4C0783d103C44f403Bb287d29af0bAE5D4E84",
+      "chainId": 1116,
+      "decimals": 8,
+      "logoURI": "https://shadowswap.xyz/images/tokens/0xcFE4C0783d103C44f403Bb287d29af0bAE5D4E84.png"
+    },
+    {
+      "name": "Yieldz Protocol",
+      "symbol": "YZ",
+      "address": "0xe191a4d47A6be111C75139757CDDBb61BEEd88FB",
+      "chainId": 1116,
+      "decimals": 18,
+      "logoURI": "https://shadowswap.xyz/images/tokens/0xe191a4d47A6be111C75139757CDDBb61BEEd88FB.png"
+    },
+    {
+      "name": "Ignore Fud",
+      "symbol": "4TOKEN",
+      "address": "0x98564e70c7fcc6d947ffe6d9efed5ba68b306f2e",
+      "chainId": 1116,
+      "decimals": 18,
+      "logoURI": "https://shadowswap.xyz/images/tokens/0x98564e70c7fcc6d947ffe6d9efed5ba68b306f2e.png"
+    },
+    {
+      "name": "Young Parrot",
+      "symbol": "YPC",
+      "address": "0xDC2393dc10734BF153153038943a5deB42b209cd",
+      "chainId": 1116,
+      "decimals": 18,
+      "logoURI": "https://youngparrotnft.com/logo100.png"
+    }
+  ]
+}

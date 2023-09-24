@@ -1,0 +1,24 @@
+{
+  "short_name": "WoofSwap",
+  "name": "WoofSwap",
+  "description": "Farm SHDW with Shadow LP Tokens",
+  "homepage_url": "https://shadowswap.xyz/",
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#1FC7D4",
+  "background_color": "#ffffff",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "type": "image/x-icon",
+      "sizes": "16x16"
+    },
+    {
+      "src": "logo.png",
+      "type": "image/png",
+      "sizes": "256x256"
+    }
+  ],
+  "iconPath": "/images/cake.svg"
+}
