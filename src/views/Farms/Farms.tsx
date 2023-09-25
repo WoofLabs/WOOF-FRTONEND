@@ -387,11 +387,11 @@ const Farms: React.FC<React.PropsWithChildren> = ({ children }) => {
           </FilterContainer>
         </ControlContainer>
 
-        {viewMode === ViewMode.TABLE ? (
+        {/* {viewMode === ViewMode.TABLE ? (
           <Table farms={chosenFarmsMemoized} cakePrice={cakePrice} userDataReady={userDataReady} />
         ) : (
           <FlexLayout>{children}</FlexLayout>
-        )}
+        )} */}
         {account && !userDataLoaded && stakedOnly && (
           <Flex justifyContent="center">
             <Loading />
