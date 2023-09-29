@@ -73,7 +73,7 @@ const config: (t: ContextApi['t'], isDark: boolean, languageCode?: string, chain
         icon: SwapIcon,
         fillIcon: SwapFillIcon,
         href: '/swap',
-        showItemsOnMobile: false,
+        showItemsOnMobile: true,
         items: [
           {
             label: t('Create Token'),
@@ -95,7 +95,7 @@ const config: (t: ContextApi['t'], isDark: boolean, languageCode?: string, chain
         icon: SwapIcon,
         fillIcon: SwapFillIcon,
         href: '/swap',
-        showItemsOnMobile: false,
+        showItemsOnMobile: true,
         items: [
           {
             label: t('Lock Token'),
