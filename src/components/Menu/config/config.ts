@@ -68,6 +68,46 @@ const config: (t: ContextApi['t'], isDark: boolean, languageCode?: string, chain
 
         ].map((item) => addMenuItemSupported(item, chainId)),
       },      
+      {
+        label: t('Create'),
+        icon: SwapIcon,
+        fillIcon: SwapFillIcon,
+        href: '/swap',
+        showItemsOnMobile: true,
+        items: [
+          {
+            label: t('Create Token'),
+            href: 'https://dx.app/dxmint?ref=moondogs&chain=Core',
+          },
+          {
+            label: t('Create Token Sale'),
+            href: 'https://dx.app/dxsalecreate?ref=moondogs&chain=Core',
+          },
+          {
+            label: t('Airdrop Tokens'),
+            href: 'https://dx.app/dxdrop?chain=Core',
+          },
+
+        ].map((item) => addMenuItemSupported(item, chainId)),
+      },
+      {
+        label: t('Lock'),
+        icon: SwapIcon,
+        fillIcon: SwapFillIcon,
+        href: '/swap',
+        showItemsOnMobile: true,
+        items: [
+          {
+            label: t('Lock Token'),
+            href: 'https://dx.app/dxlocktoken?ref=moondogs&chain=Core',
+          },
+          {
+            label: t('Lock Liquidity'),
+            href: 'https://dx.app/dxlocklp?ref=moondogs&chain=Core',
+          },
+
+        ].map((item) => addMenuItemSupported(item, chainId)),
+      },
       // {
       //   label: t('Earn'),
       //   href: '/farms',

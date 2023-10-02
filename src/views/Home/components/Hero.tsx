@@ -68,7 +68,7 @@ const Hero = () => {
         <Flex flex="1" flexDirection="column">
           <Heading scale="xxl" color="secondary" mb="24px" ml="20px" text-align="center">
             {t('The moon is made of')}
-            {t(' WOOF Tokens.')}
+            {t(' WOOF Tokens')}
           </Heading>
           <Heading scale="md" mb="24px" mt="-24px" ml={['20px', '20px']} paddingTop={2}>
             {t(
