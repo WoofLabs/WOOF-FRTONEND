@@ -68,7 +68,7 @@ const FarmCard: React.FC<React.PropsWithChildren<FarmCardProps>> = ({
       : ''
 
   const lpLabel = farm.lpSymbol && farm.lpSymbol.toUpperCase().replace('SHADOW', '')
-  const earnLabel = farm.dual ? farm.dual.earnLabel : t('SHDW + Fees')
+  const earnLabel = farm.dual ? farm.dual.earnLabel : t('WOOF + Fees')
 
   const liquidityUrlPathParts = getLiquidityUrlPathParts({
     quoteTokenAddress: farm.quoteToken.address,
@@ -76,7 +76,7 @@ const FarmCard: React.FC<React.PropsWithChildren<FarmCardProps>> = ({
   })
   const addLiquidityUrl = `${BASE_ADD_LIQUIDITY_URL}/${liquidityUrlPathParts}`
   const { lpAddress } = farm
-  const isPromotedFarm = farm.token.symbol === 'SHDW'
+  const isPromotedFarm = farm.token.symbol === 'WOOF'
 
   const toggleExpandableSection = useCallback(() => {
     setShowExpandableSection((prev) => !prev)

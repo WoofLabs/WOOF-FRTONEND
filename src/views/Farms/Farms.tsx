@@ -192,7 +192,7 @@ const Farms: React.FC<React.PropsWithChildren> = ({ children }) => {
         // }
         // -ALEX HERE Uncomment
         const totalLiquidity = new BigNumber(farm.lpTotalInQuoteToken).times(new BigNumber(1))
-        console.log(`HERE ++`)
+
         const { cakeRewardsApr, lpRewardsApr } = isActive
           ? getFarmApr(
               chainId,
@@ -203,7 +203,6 @@ const Farms: React.FC<React.PropsWithChildren> = ({ children }) => {
               regularShdwPerBlock,
             )
           : { cakeRewardsApr: 0, lpRewardsApr: 0 }
-
         return { ...farm, apr: cakeRewardsApr, lpRewardsApr, liquidity: totalLiquidity }
       })
 
@@ -387,11 +386,11 @@ const Farms: React.FC<React.PropsWithChildren> = ({ children }) => {
           </FilterContainer>
         </ControlContainer>
 
-        {/* {viewMode === ViewMode.TABLE ? (
+        {viewMode === ViewMode.TABLE ? (
           <Table farms={chosenFarmsMemoized} cakePrice={cakePrice} userDataReady={userDataReady} />
         ) : (
           <FlexLayout>{children}</FlexLayout>
-        )} */}
+        )}
         {account && !userDataLoaded && stakedOnly && (
           <Flex justifyContent="center">
             <Loading />

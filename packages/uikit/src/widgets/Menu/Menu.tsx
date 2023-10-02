@@ -137,7 +137,7 @@ const Menu: React.FC<React.PropsWithChildren<NavProps>> = ({
             <Flex alignItems="center" height="100%">
               {!isMobile && !isMd && (
                 <Box mr="12px">
-                  <CakePrice showSkeleton={false} cakePriceUsd={cakePriceUsd} />
+                  <CakePrice showSkeleton={true} cakePriceUsd={cakePriceUsd} />
                 </Box>
               )}
               <Box mt="4px">
