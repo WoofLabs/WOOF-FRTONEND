@@ -7,6 +7,13 @@ const farms: SerializedFarmConfig[] = [
    * These 3 farms (PID 0, 2, 3) should always be at the top of the file.
    */
   {
+    pid: 0,
+    lpSymbol: 'SHDW',
+    lpAddress: '0x45Dd2E707Ff0B0BcdcFd646c12BcBFF65728d3D0',
+    token: bscTokens.syrup,
+    quoteToken: bscTokens.wbnb,
+  },
+  {
     pid: 1,
     lpSymbol: 'WOOF-CORE LP',
     lpAddress: '0x7a7aD756AEFe909511Bf7E36c8656468Eb130013',

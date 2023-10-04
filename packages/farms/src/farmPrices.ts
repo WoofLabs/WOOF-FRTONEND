@@ -185,7 +185,7 @@ const nativeStableLpMap = {
     stable: 'tUSDC',
   },
   [ChainId.BSC]: {
-    address: '0xCDCE0e64e6C8271b8c8581fE5e97055C5175ea3E',
+    address: '0x599F23F8dfAf4B9b2c30284d8d29A6D354913d12',
     wNative: 'WCORE',
     stable: 'USDT',
   },
