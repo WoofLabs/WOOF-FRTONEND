@@ -308,9 +308,6 @@ const Farms: React.FC<React.PropsWithChildren> = ({ children }) => {
             <FarmH1 as="h1" scale="xxl" color="secondary" mb="24px">
               {t('WOOFSwap Farms')}
             </FarmH1>
-            <FarmH2 scale="xxl" color="secondary">
-            {t('(Farms feature is Coming from 27 September)')}
-            </FarmH2>
             <FarmH2 scale="lg" color="text">
               {t('Stake LP tokens to earn.')}
             </FarmH2>
