@@ -155,9 +155,9 @@ export interface SerializedFarmsState {
   loadingKeys: Record<string, boolean>
   poolLength?: number
   regularShdwPerBlock?: number
-  dataNew: SerializedFarm[]
-  userDataLoadedNew: boolean
-  loadingKeysNew: Record<string, boolean>
+  dataNew?: SerializedFarm[]
+  userDataLoadedNew?: boolean
+  loadingKeysNew?: Record<string, boolean>
 }
 
 export interface DeserializedFarmsState {
