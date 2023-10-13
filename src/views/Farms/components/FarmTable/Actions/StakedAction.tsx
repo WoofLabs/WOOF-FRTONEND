@@ -56,7 +56,7 @@ const StyledActionContainer = styled(ActionContainer)`
 
 export function useStakedActions(pid, lpContract) {
   const { account, chainId } = useActiveWeb3React()
-  const { onStake } = useStakeFarms(pid)
+  const { onStake } = useStakeFarms(pid, lpContract)
   const { onUnstake } = useUnstakeFarms(pid)
   const dispatch = useAppDispatch()
 
@@ -80,7 +80,7 @@ export function useStakedActions(pid, lpContract) {
 
 export function useStakedActionsNew(pid, lpContract) {
   const { account, chainId } = useActiveWeb3React()
-  const { onStakeNew } = useStakeFarms(pid)
+  const { onStakeNew } = useStakeFarms(pid, lpContract)
   const { onUnstakeNew } = useUnstakeFarms(pid)
   const dispatch = useAppDispatch()
 
