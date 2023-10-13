@@ -7,7 +7,7 @@ import { BIG_ZERO } from 'utils/bigNumber'
 import { verifyBscNetwork } from 'utils/verifyBscNetwork'
 import { SerializedFarmConfig } from '../../config/constants/types'
 import { SerializedFarm } from '../types'
-import { getMasterChefAddress } from '../../utils/addressHelpers'
+import { getMasterChefAddress, getMasterChefAddressNew } from '../../utils/addressHelpers'
 
 export const fetchMasterChefFarmPoolLength = async (chainId: number) => {
   try {
@@ -17,6 +17,26 @@ export const fetchMasterChefFarmPoolLength = async (chainId: number) => {
         {
           name: 'poolLength',
           address: getMasterChefAddress(chainId),
+        },
+      ],
+      chainId,
+    })
+
+    return new BigNumber(poolLength).toNumber()
+  } catch (error) {
+    console.error('Fetch MasterChef Farm Pool Length Error: ', error)
+    return BIG_ZERO.toNumber()
+  }
+}
+
+export const fetchMasterChefFarmPoolLengthNew = async (chainId: number) => {
+  try {
+    const [poolLength] = await multicallv2({
+      abi: masterchefABI,
+      calls: [
+        {
+          name: 'poolLength',
+          address: getMasterChefAddressNew(chainId),
         },
       ],
       chainId,

@@ -10,7 +10,7 @@ import { useERC20 } from 'hooks/useContract'
 import { useRouter } from 'next/router'
 import { useCallback, useContext } from 'react'
 import { useAppDispatch } from 'state'
-import { fetchFarmUserDataAsync } from 'state/farms'
+import { fetchFarmUserDataAsync, fetchFarmUserDataAsyncNew } from 'state/farms'
 import { useLpTokenPrice, usePriceCakeBusd } from 'state/farms/hooks'
 import styled from 'styled-components'
 import getLiquidityUrlPathParts from 'utils/getLiquidityUrlPathParts'
@@ -63,7 +63,10 @@ export function useStakedActions(pid, lpContract) {
   const { onApprove } = useApproveFarm(lpContract, chainId)
 
   const onDone = useCallback(
-    () => dispatch(fetchFarmUserDataAsync({ account, pids: [pid], chainId })),
+    () => {
+      dispatch(fetchFarmUserDataAsyncNew({ account, pids: [pid], chainId }))
+      dispatch(fetchFarmUserDataAsync({ account, pids: [pid], chainId }))
+    },
     [account, pid, chainId, dispatch],
   )
 
@@ -74,6 +77,31 @@ export function useStakedActions(pid, lpContract) {
     onDone,
   }
 }
+
+export function useStakedActionsNew(pid, lpContract) {
+  const { account, chainId } = useActiveWeb3React()
+  const { onStakeNew } = useStakeFarms(pid)
+  const { onUnstakeNew } = useUnstakeFarms(pid)
+  const dispatch = useAppDispatch()
+
+  const { onApproveNew } = useApproveFarm(lpContract, chainId)
+
+  const onDone = useCallback(
+    () => {
+      dispatch(fetchFarmUserDataAsyncNew({ account, pids: [pid], chainId }))
+      dispatch(fetchFarmUserDataAsync({ account, pids: [pid], chainId }))
+    },
+    [account, pid, chainId, dispatch],
+  )
+
+  return {
+    onStake: onStakeNew,
+    onUnstake: onUnstakeNew,
+    onApprove: onApproveNew,
+    onDone,
+  }
+}
+
 
 export const ProxyStakedContainer = ({ children, ...props }) => {
   const { account } = useActiveWeb3React()
@@ -103,6 +131,27 @@ export const StakedContainer = ({ children, ...props }) => {
   const { lpAddress } = props
   const lpContract = useERC20(lpAddress)
   const { onStake, onUnstake, onApprove, onDone } = useStakedActions(props.pid, lpContract)
+
+  const { allowance } = props.userData || {}
+
+  const isApproved = account && allowance && allowance.isGreaterThan(0)
+
+  return children({
+    ...props,
+    onStake,
+    onDone,
+    onUnstake,
+    onApprove,
+    isApproved,
+  })
+}
+
+export const StakedContainerNew = ({ children, ...props }) => {
+  const { account } = useActiveWeb3React()
+
+  const { lpAddress } = props
+  const lpContract = useERC20(lpAddress)
+  const { onStake, onUnstake, onApprove, onDone } = useStakedActionsNew(props.pid, lpContract)
 
   const { allowance } = props.userData || {}
 

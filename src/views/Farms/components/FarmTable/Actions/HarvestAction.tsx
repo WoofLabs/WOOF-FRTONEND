@@ -7,7 +7,7 @@ import { ToastDescriptionWithTx } from 'components/Toast'
 import useCatchTxError from 'hooks/useCatchTxError'
 import { useERC20 } from 'hooks/useContract'
 import { useAppDispatch } from 'state'
-import { fetchFarmUserDataAsync } from 'state/farms'
+import { fetchFarmUserDataAsync, fetchFarmUserDataAsyncNew } from 'state/farms'
 
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import { useCallback } from 'react'
@@ -41,11 +41,30 @@ export const HarvestActionContainer = ({ children, ...props }) => {
   const dispatch = useAppDispatch()
 
   const onDone = useCallback(
-    () => dispatch(fetchFarmUserDataAsync({ account, pids: [props.pid], chainId })),
+    () => {
+      dispatch(fetchFarmUserDataAsyncNew({ account, pids: [props.pid], chainId }))
+      dispatch(fetchFarmUserDataAsync({ account, pids: [props.pid], chainId }))
+    },
     [account, dispatch, chainId, props.pid],
   )
 
   return children({ ...props, onDone, onReward })
+}
+
+export const HarvestActionContainerNew = ({ children, ...props }) => {
+  const { onRewardNew } = useHarvestFarm(props.pid)
+  const { account, chainId } = useActiveWeb3React()
+  const dispatch = useAppDispatch()
+
+  const onDone = useCallback(
+    () => {
+      dispatch(fetchFarmUserDataAsyncNew({ account, pids: [props.pid], chainId }))
+      dispatch(fetchFarmUserDataAsync({ account, pids: [props.pid], chainId }))
+    },
+    [account, dispatch, chainId, props.pid],
+  )
+
+  return children({ ...props, onDone, onReward: onRewardNew })
 }
 
 export const HarvestAction: React.FunctionComponent<React.PropsWithChildren<HarvestActionProps>> = ({

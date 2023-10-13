@@ -148,3 +148,20 @@ export const farmSelector = (chainId: number) =>
       }
     },
   )
+
+export const farmSelectorNew = (chainId: number) =>
+  createSelector(
+    (state: State) => state.farms,
+    (farms) => {
+      const deserializedFarmsData = farms.dataNew.map(deserializeFarm).filter((farm) => farm.token.chainId === chainId)
+      const { loadArchivedFarmsData, userDataLoadedNew, poolLength, regularShdwPerBlock } = farms
+
+      return {
+        loadArchivedFarmsDataNew: loadArchivedFarmsData,
+        userDataLoadedNew,
+        dataNew: deserializedFarmsData,
+        poolLength,
+        regularShdwPerBlock,
+      }
+    },
+  )

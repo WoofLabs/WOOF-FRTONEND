@@ -85,3 +85,20 @@ export const fetchPublicFarmsData = async (
     throw error
   }
 }
+
+export const fetchPublicFarmsDataNew = async (
+  farms: SerializedFarmConfig[],
+  chainId = ChainId.BSC,
+  multicall: MultiCallV2,
+  masterChefAddress: string,
+): Promise<any[]> => {
+  try {
+    const farmCalls = farms.flatMap((farm) => fetchFarmCalls(farm, masterChefAddress))
+    const chunkSize = farmCalls.length / farms.length
+    const farmMultiCallResult = await multicall({ abi, calls: farmCalls, chainId })
+    return chunk(farmMultiCallResult, chunkSize)
+  } catch (error) {
+    console.error('MasterChef Public Data error ', error)
+    throw error
+  }
+}

@@ -28,6 +28,7 @@ export interface RowProps {
   details: FarmWithStakedValue
   type: 'core' | 'community'
   initialActivity?: boolean
+  isNew?: boolean
 }
 
 interface RowPropsWithLoading extends RowProps {

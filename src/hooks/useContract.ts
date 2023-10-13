@@ -41,6 +41,7 @@ import {
   getIfoV3Contract,
   getLotteryV2Contract,
   getMasterchefContract,
+  getMasterchefContractNew,
   getMasterchefV1Contract,
   getNftMarketContract,
   getNftSaleContract,
@@ -141,6 +142,12 @@ export const useMasterchef = (withSignerIfPossible = true) => {
   const { chainId } = useActiveChainId()
   const providerOrSigner = useProviderOrSigner(withSignerIfPossible)
   return useMemo(() => getMasterchefContract(providerOrSigner, chainId), [providerOrSigner, chainId])
+}
+
+export const useMasterchefNew = (withSignerIfPossible = true) => {
+  const { chainId } = useActiveChainId()
+  const providerOrSigner = useProviderOrSigner(withSignerIfPossible)
+  return useMemo(() => getMasterchefContractNew(providerOrSigner, chainId), [providerOrSigner, chainId])
 }
 
 export const useMasterchefV1 = () => {

@@ -14,6 +14,7 @@ import ProxyFarmContainer from '../YieldBooster/components/ProxyFarmContainer'
 
 export interface ITableProps {
   farms: FarmWithStakedValue[]
+  farmsNew: FarmWithStakedValue[]
   userDataReady: boolean
   cakePrice: BigNumber
   sortColumn?: string
@@ -58,7 +59,7 @@ const TableContainer = styled.div`
   position: relative;
 `
 
-const FarmTable: React.FC<React.PropsWithChildren<ITableProps>> = ({ farms, cakePrice, userDataReady }) => {
+const FarmTable: React.FC<React.PropsWithChildren<ITableProps>> = ({ farms, farmsNew, cakePrice, userDataReady }) => {
   const tableWrapperEl = useRef<HTMLDivElement>(null)
   const { query } = useRouter()
 
@@ -104,7 +105,7 @@ const FarmTable: React.FC<React.PropsWithChildren<ITableProps>> = ({ farms, cake
     return getBalanceNumber(earnings)
   }
 
-  const generateRow = (farm) => {
+  const generateRow = (farm, isNewFarm) => {
     const { token, quoteToken } = farm
     const tokenAddress = token.address
     const quoteTokenAddress = quoteToken.address
@@ -145,12 +146,14 @@ const FarmTable: React.FC<React.PropsWithChildren<ITableProps>> = ({ farms, cake
       type: farm.isCommunity ? 'community' : 'core',
       details: farm,
       initialActivity,
+      isNew: isNewFarm
     }
 
     return row
   }
 
-  const rowData = farms.map((farm) => generateRow(farm))
+  const rowData = farms.map((farm) => generateRow(farm, false))
+  const rowDataNew = farmsNew.map((farm) => generateRow(farm, true))
 
   const generateSortedRow = (row) => {
     // @ts-ignore
@@ -162,10 +165,11 @@ const FarmTable: React.FC<React.PropsWithChildren<ITableProps>> = ({ farms, cake
       newRow[column.name] = row[column.name]
     })
     newRow.initialActivity = row.initialActivity
+    newRow.isNew = row.isNew
     return newRow
   }
 
-  const sortedRows = rowData.map(generateSortedRow)
+  const sortedRows = [...rowData.map(generateSortedRow), ...rowDataNew.map(generateSortedRow)]
 
   return (
     <Container id="farms-table">
@@ -173,13 +177,13 @@ const FarmTable: React.FC<React.PropsWithChildren<ITableProps>> = ({ farms, cake
         <TableWrapper ref={tableWrapperEl}>
           <StyledTable>
             <TableBody>
-              {sortedRows.map((row) => {
+              {sortedRows.map((row, index) => {
                 return row?.details?.boosted ? (
                   <ProxyFarmContainer key={`table-row-${row.farm.pid}`} farm={row.details}>
                     <Row {...row} userDataReady={userDataReady} />
                   </ProxyFarmContainer>
                 ) : (
-                  <Row {...row} userDataReady={userDataReady} key={`table-row-${row.farm.pid}`} />
+                  <Row {...row} userDataReady={userDataReady} key={`table-row-${row.farm.pid}-${index}`} />
                 )
               })}
             </TableBody>

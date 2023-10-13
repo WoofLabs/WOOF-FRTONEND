@@ -8,8 +8,8 @@ import HarvestAction from './HarvestAction'
 import StakeAction from './StakeAction'
 import BoostedAction from '../YieldBooster/components/BoostedAction'
 import { YieldBoosterStateContext } from '../YieldBooster/components/ProxyFarmContainer'
-import { HarvestActionContainer, ProxyHarvestActionContainer } from '../FarmTable/Actions/HarvestAction'
-import { ProxyStakedContainer, StakedContainer } from '../FarmTable/Actions/StakedAction'
+import { HarvestActionContainer, ProxyHarvestActionContainer, HarvestActionContainerNew } from '../FarmTable/Actions/HarvestAction'
+import { ProxyStakedContainer, StakedContainer, StakedContainerNew } from '../FarmTable/Actions/StakedAction'
 
 const Action = styled.div`
   padding-top: 16px;
@@ -28,6 +28,7 @@ interface FarmCardActionsProps {
   addLiquidityUrl?: string
   lpLabel?: string
   displayApr?: string
+  isNew?: boolean
 }
 
 const CardActions: React.FC<React.PropsWithChildren<FarmCardActionsProps>> = ({
@@ -36,6 +37,7 @@ const CardActions: React.FC<React.PropsWithChildren<FarmCardActionsProps>> = ({
   addLiquidityUrl,
   lpLabel,
   displayApr,
+  isNew
 }) => {
   const { t } = useTranslation()
   const { pid, lpAddress } = farm
@@ -58,9 +60,14 @@ const CardActions: React.FC<React.PropsWithChildren<FarmCardActionsProps>> = ({
           {(props) => <HarvestAction {...props} />}
         </ProxyHarvestActionContainer>
       ) : (
-        <HarvestActionContainer earnings={earnings} pid={pid}>
-          {(props) => <HarvestAction {...props} />}
-        </HarvestActionContainer>
+        <>
+          {!isNew ? <HarvestActionContainer earnings={earnings} pid={pid}>
+            {(props) => <HarvestAction {...props} />}
+          </HarvestActionContainer> :
+          <HarvestActionContainerNew earnings={earnings} pid={pid}>
+            {(props) => <HarvestAction {...props} />}
+          </HarvestActionContainerNew>}
+        </>
       )}
       {farm.boosted && (
         <BoostedAction
@@ -97,9 +104,14 @@ const CardActions: React.FC<React.PropsWithChildren<FarmCardActionsProps>> = ({
           {(props) => <StakeAction {...props} />}
         </ProxyStakedContainer>
       ) : (
-        <StakedContainer {...farm} lpLabel={lpLabel} addLiquidityUrl={addLiquidityUrl} displayApr={displayApr}>
-          {(props) => <StakeAction {...props} />}
-        </StakedContainer>
+        <>
+          {!isNew ? <StakedContainer {...farm} lpLabel={lpLabel} addLiquidityUrl={addLiquidityUrl} displayApr={displayApr}>
+            {(props) => <StakeAction {...props} />}
+          </StakedContainer> :
+          <StakedContainerNew {...farm} lpLabel={lpLabel} addLiquidityUrl={addLiquidityUrl} displayApr={displayApr}>
+            {(props) => <StakeAction {...props} />}
+          </StakedContainerNew>}
+        </>
       )}
     </Action>
   )

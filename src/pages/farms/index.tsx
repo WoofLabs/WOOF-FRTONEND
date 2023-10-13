@@ -30,7 +30,7 @@ const ProxyFarmCardContainer = ({ farm }) => {
 
 const FarmsPage = () => {
   const { account } = useWeb3React()
-  const { chosenFarmsMemoized } = useContext(FarmsContext)
+  const { chosenFarmsMemoized, chosenFarmsMemoizedNew } = useContext(FarmsContext)
   const cakePrice = usePriceCakeBusd()
   return (
     <>
@@ -47,6 +47,25 @@ const FarmsPage = () => {
             cakePrice={cakePrice}
             account={account}
             removed={false}
+            isNew={false}
+          />
+        ),
+      )}
+
+      {chosenFarmsMemoizedNew.map((farm) =>
+        farm.boosted ? (
+          <ProxyFarmContainer farm={farm} key={farm.pid}>
+            <ProxyFarmCardContainer farm={farm} />
+          </ProxyFarmContainer>
+        ) : (
+          <FarmCard
+            key={farm.pid}
+            farm={farm}
+            displayApr={getDisplayApr(farm.apr, farm.lpRewardsApr)}
+            cakePrice={cakePrice}
+            account={account}
+            removed={false}
+            isNew={true}
           />
         ),
       )}

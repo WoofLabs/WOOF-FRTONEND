@@ -1,5 +1,5 @@
 import { getFarmConfig } from '@pancakeswap/farms/constants'
-import { createFarmFetcher } from '@pancakeswap/farms'
+import { createFarmFetcher, createFarmFetcherNew } from '@pancakeswap/farms'
 import { ChainId } from '@pancakeswap/sdk'
 import { createAsyncThunk, createSlice, isAnyOf } from '@reduxjs/toolkit'
 import type {
@@ -27,8 +27,12 @@ import {
   fetchFarmUserEarnings,
   fetchFarmUserStakedBalances,
   fetchFarmUserTokenBalances,
+  fetchFarmUserAllowancesNew,
+  fetchFarmUserEarningsNew,
+  fetchFarmUserStakedBalancesNew,
+  fetchFarmUserTokenBalancesNew
 } from './fetchFarmUser'
-import { fetchMasterChefFarmPoolLength } from './fetchMasterChefData'
+import { fetchMasterChefFarmPoolLength, fetchMasterChefFarmPoolLengthNew } from './fetchMasterChefData'
 import getFarmsPrices from './getFarmsPrices'
 
 /**
@@ -60,6 +64,9 @@ const fetchFetchPublicDataOld = async ({ pids, chainId }): Promise<[SerializedFa
   return [farmsWithPrices, poolLengthAsBigNumber.toNumber(), regularShdwPerBlock.toNumber()]
 }
 
+const farmFetcher = createFarmFetcher(multicallv2)
+const farmFetcherNew = createFarmFetcherNew(multicallv2)
+
 const fetchFarmPublicDataPkg = async ({ pids, chainId, chain }): Promise<[SerializedFarm[], number, number]> => {
   const farmsConfig = await getFarmConfig(chainId)
   const farmsCanFetch = farmsConfig.filter((farmConfig) => pids.includes(farmConfig.pid))
@@ -73,7 +80,19 @@ const fetchFarmPublicDataPkg = async ({ pids, chainId, chain }): Promise<[Serial
   return [farmsWithPrice, poolLength, regularShdwPerBlock]
 }
 
-const farmFetcher = createFarmFetcher(multicallv2)
+
+const fetchFarmPublicDataPkgNew = async ({ pids, chainId, chain }): Promise<[SerializedFarm[], number, number]> => {
+  const farmsConfig = await getFarmConfig(chainId)
+  const farmsCanFetch = farmsConfig.filter((farmConfig) => pids.includes(farmConfig.pid))
+  const priceHelperLpsConfig = getFarmsPriceHelperLpFiles(chainId)
+
+  const { farmsWithPrice, poolLength, regularShdwPerBlock } = await farmFetcherNew.fetchFarms({
+    chainId,
+    isTestnet: chain.testnet,
+    farms: farmsCanFetch.concat(priceHelperLpsConfig),
+  })
+  return [farmsWithPrice, poolLength, regularShdwPerBlock]
+}
 
 const farmApiFetch = (chainId: number) => fetch(`${FARM_API}/${chainId}`).then((res) => res.json())
 
@@ -82,6 +101,9 @@ const initialState: SerializedFarmsState = {
   loadArchivedFarmsData: false,
   userDataLoaded: false,
   loadingKeys: {},
+  dataNew: [],
+  userDataLoadedNew: false,
+  loadingKeysNew: {},
 }
 
 // Async thunks
@@ -89,7 +111,8 @@ export const fetchInitialFarmsData = createAsyncThunk<SerializedFarm[], { chainI
   'farms/fetchInitialFarmsData',
   async ({ chainId }) => {
     const farmDataList = await getFarmConfig(chainId)
-    return farmDataList.map((farm) => ({
+    
+    const ret = farmDataList.map((farm) => ({
       ...farm,
       userData: {
         allowance: '0',
@@ -98,6 +121,7 @@ export const fetchInitialFarmsData = createAsyncThunk<SerializedFarm[], { chainI
         earnings: '0',
       },
     }))
+    return ret
   },
 )
 
@@ -141,6 +165,52 @@ export const fetchFarmsPublicDataAsync = createAsyncThunk<
     condition: (arg, { getState }) => {
       const { farms } = getState()
       if (farms.loadingKeys[stringify({ type: fetchFarmsPublicDataAsync.typePrefix, arg })]) {
+        console.debug('farms action is fetching, skipping here')
+        return false
+      }
+      return true
+    },
+  },
+)
+
+export const fetchFarmsPublicDataAsyncNew = createAsyncThunk<
+  [SerializedFarm[], number, number],
+  { pids: number[]; chainId: number; flag: string },
+  {
+    state: AppState
+  }
+>(
+  'farms/fetchFarmsPublicDataAsyncNew',
+  async ({ pids, chainId, flag = 'pkg' }) => {
+    const chain = chains.find((c) => c.id === chainId)
+    if (!chain || !farmFetcherNew.isChainSupported(chain.id)) throw new Error('chain not supported')
+    try {
+      if (flag === 'old') {
+        return fetchFetchPublicDataOld({ pids, chainId })
+      }
+      if (flag === 'api' && !fallback) {
+        try {
+          const { updatedAt, data, poolLength, regularShdwPerBlock } = await farmApiFetch(chainId)
+          if (Date.now() - new Date(updatedAt).getTime() > 3 * 60 * 1000) {
+            fallback = true
+            throw new Error('Farm Api out dated')
+          }
+          return [data, poolLength, regularShdwPerBlock]
+        } catch (error) {
+          console.error(error)
+          return fetchFarmPublicDataPkgNew({ pids, chainId, chain })
+        }
+      }
+      return fetchFarmPublicDataPkgNew({ pids, chainId, chain })
+    } catch (error) {
+      console.error(error)
+      throw error
+    }
+  },
+  {
+    condition: (arg, { getState }) => {
+      const { farms } = getState()
+      if (farms.loadingKeys[stringify({ type: fetchFarmsPublicDataAsyncNew.typePrefix, arg })]) {
         console.debug('farms action is fetching, skipping here')
         return false
       }
@@ -224,6 +294,26 @@ async function getNormalFarmsStakeValue(farms, account, chainId) {
   return normalFarmAllowances
 }
 
+async function getNormalFarmsStakeValueNew(farms, account, chainId) {
+  const [userFarmAllowances, userFarmTokenBalances, userStakedBalances, userFarmEarnings] = await Promise.all([
+    fetchFarmUserAllowancesNew(account, farms, chainId),
+    fetchFarmUserTokenBalancesNew(account, farms, chainId),
+    fetchFarmUserStakedBalancesNew(account, farms, chainId),
+    fetchFarmUserEarningsNew(account, farms, chainId),
+  ])
+
+  const normalFarmAllowances = userFarmAllowances.map((_, index) => {
+    return {
+      pid: farms[index].pid,
+      allowance: userFarmAllowances[index],
+      tokenBalance: userFarmTokenBalances[index],
+      stakedBalance: userStakedBalances[index],
+      earnings: userFarmEarnings[index],
+    }
+  })
+  return normalFarmAllowances
+}
+
 export const fetchFarmUserDataAsync = createAsyncThunk<
   FarmUserDataResponse[],
   { account: string; pids: number[]; proxyAddress?: string; chainId: number },
@@ -251,13 +341,52 @@ export const fetchFarmUserDataAsync = createAsyncThunk<
 
       return [...proxyAllowances, ...normalAllowances]
     }
-
     return getNormalFarmsStakeValue(farmsCanFetch, account, chainId)
   },
   {
     condition: (arg, { getState }) => {
       const { farms } = getState()
       if (farms.loadingKeys[stringify({ type: fetchFarmUserDataAsync.typePrefix, arg })]) {
+        console.debug('farms user action is fetching, skipping here')
+        return false
+      }
+      return true
+    },
+  },
+)
+export const fetchFarmUserDataAsyncNew = createAsyncThunk<
+  FarmUserDataResponse[],
+  { account: string; pids: number[]; proxyAddress?: string; chainId: number },
+  {
+    state: AppState
+  }
+>(
+  'farms/fetchFarmUserDataAsyncNew',
+  async ({ account, pids, proxyAddress, chainId }, config) => {
+    if (!farmFetcherNew.isChainSupported(chainId)) {
+      throw new Error(`chain id ${chainId} not supported`)
+    }
+    const poolLength = config.getState().farms.poolLength ?? (await fetchMasterChefFarmPoolLengthNew(chainId))
+    const farmsConfig = await getFarmConfig(chainId)
+    const farmsCanFetch = farmsConfig.filter(
+      (farmConfig) => pids.includes(farmConfig.pid) && poolLength > farmConfig.pid,
+    )
+    if (proxyAddress && farmsCanFetch?.length) {
+      const { normalFarms, farmsWithProxy } = splitProxyFarms(farmsCanFetch)
+
+      const [proxyAllowances, normalAllowances] = await Promise.all([
+        getBoostedFarmsStakeValue(farmsWithProxy, account, chainId, proxyAddress),
+        getNormalFarmsStakeValueNew(normalFarms, account, chainId),
+      ])
+
+      return [...proxyAllowances, ...normalAllowances]
+    }
+    return getNormalFarmsStakeValueNew(farmsCanFetch, account, chainId)
+  },
+  {
+    condition: (arg, { getState }) => {
+      const { farms } = getState()
+      if (farms.loadingKeys[stringify({ type: fetchFarmUserDataAsyncNew.typePrefix, arg })]) {
         console.debug('farms user action is fetching, skipping here')
         return false
       }
@@ -301,11 +430,25 @@ export const farmsSlice = createSlice({
         }
       })
       state.userDataLoaded = false
+      
+      state.dataNew = state.dataNew.map((farm) => {
+        return {
+          ...farm,
+          userData: {
+            allowance: '0',
+            tokenBalance: '0',
+            stakedBalance: '0',
+            earnings: '0',
+          },
+        }
+      })
+      state.userDataLoadedNew = false
     })
     // Init farm data
     builder.addCase(fetchInitialFarmsData.fulfilled, (state, action) => {
       const farmData = action.payload
       state.data = farmData
+      state.dataNew = farmData
     })
 
     // Update farms with live data
@@ -313,6 +456,17 @@ export const farmsSlice = createSlice({
       const [farmPayload, poolLength, regularShdwPerBlock] = action.payload
       const farmPayloadPidMap = fromPairs(farmPayload.map((farmData) => [farmData.pid, farmData]))
       state.data = state.data.map((farm) => {
+        const liveFarmData = farmPayloadPidMap[farm.pid]
+        return { ...farm, ...liveFarmData }
+      })
+      state.poolLength = poolLength
+      state.regularShdwPerBlock = regularShdwPerBlock
+    })
+
+    builder.addCase(fetchFarmsPublicDataAsyncNew.fulfilled, (state, action) => {
+      const [farmPayload, poolLength, regularShdwPerBlock] = action.payload
+      const farmPayloadPidMap = fromPairs(farmPayload.map((farmData) => [farmData.pid, farmData]))
+      state.dataNew = state.dataNew.map((farm) => {
         const liveFarmData = farmPayloadPidMap[farm.pid]
         return { ...farm, ...liveFarmData }
       })
@@ -330,9 +484,23 @@ export const farmsSlice = createSlice({
         }
         return farm
       })
+
       state.userDataLoaded = true
     })
 
+    builder.addCase(fetchFarmUserDataAsyncNew.fulfilled, (state, action) => {
+      const userDataMap = fromPairs(action.payload.map((userDataEl) => [userDataEl.pid, userDataEl]))
+      state.dataNew = state.dataNew.map((farm) => {
+        const userDataEl = userDataMap[farm.pid]
+        if (userDataEl) {
+          return { ...farm, userData: userDataEl }
+        }
+        return farm
+      })
+
+      state.userDataLoadedNew = true
+    })
+    
     builder.addMatcher(isAnyOf(fetchFarmUserDataAsync.pending, fetchFarmsPublicDataAsync.pending), (state, action) => {
       state.loadingKeys[serializeLoadingKey(action, 'pending')] = true
     })
@@ -346,6 +514,22 @@ export const farmsSlice = createSlice({
       isAnyOf(fetchFarmsPublicDataAsync.rejected, fetchFarmUserDataAsync.rejected),
       (state, action) => {
         state.loadingKeys[serializeLoadingKey(action, 'rejected')] = false
+      },
+    )
+    
+    builder.addMatcher(isAnyOf(fetchFarmUserDataAsyncNew.pending, fetchFarmsPublicDataAsyncNew.pending), (state, action) => {
+      state.loadingKeysNew[serializeLoadingKey(action, 'pending')] = true
+    })
+    builder.addMatcher(
+      isAnyOf(fetchFarmUserDataAsyncNew.fulfilled, fetchFarmsPublicDataAsyncNew.fulfilled),
+      (state, action) => {
+        state.loadingKeysNew[serializeLoadingKey(action, 'fulfilled')] = false
+      },
+    )
+    builder.addMatcher(
+      isAnyOf(fetchFarmsPublicDataAsyncNew.rejected, fetchFarmUserDataAsyncNew.rejected),
+      (state, action) => {
+        state.loadingKeysNew[serializeLoadingKey(action, 'rejected')] = false
       },
     )
   },

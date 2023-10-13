@@ -12,11 +12,12 @@ import { getMasterchefContract } from 'utils/contractHelpers'
 import { useFastRefreshEffect } from 'hooks/useRefreshEffect'
 import { featureFarmApiAtom, useFeatureFlag } from 'hooks/useFeatureFlag'
 import { getFarmConfig } from '@pancakeswap/farms/constants'
-import { fetchFarmsPublicDataAsync, fetchFarmUserDataAsync, fetchInitialFarmsData } from '.'
-import { DeserializedFarm, DeserializedFarmsState, DeserializedFarmUserData, State } from '../types'
+import { fetchFarmsPublicDataAsync, fetchFarmsPublicDataAsyncNew, fetchFarmUserDataAsync, fetchFarmUserDataAsyncNew, fetchInitialFarmsData } from '.'
+import { DeserializedFarm, DeserializedFarmsState, DeserializedFarmsStateNew, DeserializedFarmUserData, State } from '../types'
 import {
   farmFromLpSymbolSelector,
   farmSelector,
+  farmSelectorNew,
   makeBusdPriceFromPidSelector,
   makeFarmFromPidSelector,
   makeLpTokenPriceFromLpSymbolSelector,
@@ -42,6 +43,7 @@ export const usePollFarmsWithUserData = () => {
     async () => {
       const farmsConfig = await getFarmConfig(chainId)
       const pids = farmsConfig.map((farmToFetch) => farmToFetch.pid)
+      dispatch(fetchFarmsPublicDataAsyncNew({ pids, chainId, flag: farmFlag }))
       dispatch(fetchFarmsPublicDataAsync({ pids, chainId, flag: farmFlag }))
     },
     {
@@ -59,7 +61,8 @@ export const usePollFarmsWithUserData = () => {
       const farmsConfig = await getFarmConfig(chainId)
       const pids = farmsConfig.map((farmToFetch) => farmToFetch.pid)
       const params = proxyAddress ? { account, pids, proxyAddress, chainId } : { account, pids, chainId }
-
+      
+      dispatch(fetchFarmUserDataAsyncNew(params))
       dispatch(fetchFarmUserDataAsync(params))
     },
     {
@@ -93,6 +96,7 @@ export const usePollCoreFarmData = () => {
   useFastRefreshEffect(() => {
     if (chainId && farmFlag !== 'api') {
       dispatch(fetchFarmsPublicDataAsync({ pids: coreFarmPIDs[chainId], chainId, flag: farmFlag }))
+      dispatch(fetchFarmsPublicDataAsyncNew({ pids: coreFarmPIDs[chainId], chainId, flag: farmFlag }))
     }
   }, [dispatch, chainId, farmFlag])
 }
@@ -100,6 +104,11 @@ export const usePollCoreFarmData = () => {
 export const useFarms = (): DeserializedFarmsState => {
   const { chainId } = useActiveWeb3React()
   return useSelector(farmSelector(chainId))
+}
+
+export const useFarmsNew = (): DeserializedFarmsStateNew => {
+  const { chainId } = useActiveWeb3React()
+  return useSelector(farmSelectorNew(chainId))
 }
 
 export const useFarmsPoolLength = (): number => {

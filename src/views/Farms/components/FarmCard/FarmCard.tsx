@@ -44,6 +44,7 @@ interface FarmCardProps {
   cakePrice?: BigNumber
   account?: string
   originalLiquidity?: BigNumber
+  isNew?: boolean
 }
 
 const FarmCard: React.FC<React.PropsWithChildren<FarmCardProps>> = ({
@@ -53,6 +54,7 @@ const FarmCard: React.FC<React.PropsWithChildren<FarmCardProps>> = ({
   cakePrice,
   account,
   originalLiquidity,
+  isNew
 }) => {
   const { t } = useTranslation()
   const { chainId } = useActiveWeb3React()
@@ -132,6 +134,7 @@ const FarmCard: React.FC<React.PropsWithChildren<FarmCardProps>> = ({
           account={account}
           addLiquidityUrl={addLiquidityUrl}
           displayApr={displayApr}
+          isNew={isNew}
         />
       </FarmCardInnerContainer>
 

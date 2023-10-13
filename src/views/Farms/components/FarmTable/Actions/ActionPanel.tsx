@@ -7,8 +7,8 @@ import { getBlockExploreLink } from 'utils'
 import { useContext } from 'react'
 import { FarmWithStakedValue } from '../../types'
 
-import { HarvestAction, HarvestActionContainer, ProxyHarvestActionContainer } from './HarvestAction'
-import StakedAction, { ProxyStakedContainer, StakedContainer } from './StakedAction'
+import { HarvestAction, HarvestActionContainer, HarvestActionContainerNew, ProxyHarvestActionContainer } from './HarvestAction'
+import StakedAction, { ProxyStakedContainer, StakedContainer, StakedContainerNew } from './StakedAction'
 import Apr, { AprProps } from '../Apr'
 import Multiplier, { MultiplierProps } from '../Multiplier'
 import Liquidity, { LiquidityProps } from '../Liquidity'
@@ -23,6 +23,7 @@ export interface ActionPanelProps {
   details: FarmWithStakedValue
   userDataReady: boolean
   expanded: boolean
+  isNew?: boolean
 }
 
 const expandAnimation = keyframes`
@@ -114,6 +115,7 @@ const ActionPanel: React.FunctionComponent<React.PropsWithChildren<ActionPanelPr
   liquidity,
   userDataReady,
   expanded,
+  isNew
 }) => {
   const { chainId } = useActiveWeb3React()
   const { proxyFarm, shouldUseProxyFarm } = useContext(YieldBoosterStateContext)
@@ -186,9 +188,14 @@ const ActionPanel: React.FunctionComponent<React.PropsWithChildren<ActionPanelPr
             {(props) => <HarvestAction {...props} />}
           </ProxyHarvestActionContainer>
         ) : (
-          <HarvestActionContainer {...farm} userDataReady={userDataReady}>
-            {(props) => <HarvestAction {...props} />}
-          </HarvestActionContainer>
+          <>
+            {!isNew ? <HarvestActionContainer {...farm} userDataReady={userDataReady}>
+              {(props) => <HarvestAction {...props} />}
+            </HarvestActionContainer> :
+              <HarvestActionContainerNew {...farm} userDataReady={userDataReady}>
+                {(props) => <HarvestAction {...props} />}
+              </HarvestActionContainerNew>}
+          </>
         )}
         {farm?.boosted && (
           <ActionContainerSection style={{ minHeight: 124.5 }}>
@@ -213,9 +220,14 @@ const ActionPanel: React.FunctionComponent<React.PropsWithChildren<ActionPanelPr
             {(props) => <StakedAction {...props} />}
           </ProxyStakedContainer>
         ) : (
-          <StakedContainer {...farm} userDataReady={userDataReady} lpLabel={lpLabel} displayApr={apr.value}>
-            {(props) => <StakedAction {...props} />}
-          </StakedContainer>
+          <>
+            {!isNew ? <StakedContainer {...farm} userDataReady={userDataReady} lpLabel={lpLabel} displayApr={apr.value}>
+              {(props) => <StakedAction {...props} />}
+            </StakedContainer> :
+              <StakedContainerNew {...farm} userDataReady={userDataReady} lpLabel={lpLabel} displayApr={apr.value}>
+                {(props) => <StakedAction {...props} />}
+              </StakedContainerNew>}
+          </>
         )}
       </ActionContainer>
     </Container>

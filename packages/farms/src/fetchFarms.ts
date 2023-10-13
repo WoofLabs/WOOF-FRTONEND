@@ -4,7 +4,7 @@ import { MultiCallV2 } from '@pancakeswap/multicall'
 import { ChainId } from '@pancakeswap/sdk'
 import { BIG_TEN, FIXED_TWO, FIXED_ZERO } from './const'
 import { getFarmsPrices } from './farmPrices'
-import { fetchPublicFarmsData } from './fetchPublicFarmData'
+import { fetchPublicFarmsData, fetchPublicFarmsDataNew } from './fetchPublicFarmData'
 import { fetchStableFarmData } from './fetchStableFarmData'
 import { isStableFarm, SerializedFarmConfig } from './types'
 
@@ -38,6 +38,73 @@ export async function farmV2FetchFarms({
     fetchStableFarmData(stableFarms, chainId, multicallv2),
     fetchMasterChefData(farms, isTestnet, multicallv2, masterChefAddress),
     fetchPublicFarmsData(farms, chainId, multicallv2, masterChefAddress),
+  ])
+
+  const stableFarmsData = (stableFarmsResults as StableLpData[]).map(formatStableFarm)
+  const stableFarmsDataMap = stableFarms.reduce<Record<number, FormatStableFarmResponse>>((map, farm, index) => {
+    return {
+      ...map,
+      [farm.pid]: stableFarmsData[index],
+    }
+  }, {})
+
+  const lpData = lpDataResults.map(formatClassicFarmResponse)
+
+  const farmsData = farms.map((farm, index) => {
+    try {
+      return {
+        pid: farm.pid,
+        ...farm,
+        ...getClassicFarmsDynamicData({
+          ...lpData[index],
+          ...stableFarmsDataMap[farm.pid],
+          token0Decimals: farm.token.decimals,
+          token1Decimals: farm.quoteToken.decimals,
+        }),
+        ...(stableFarmsDataMap[farm.pid] &&
+          getStableFarmDynamicData({
+            price0: stableFarmsDataMap[farm.pid].price0,
+            token1Decimals: farm.quoteToken.decimals,
+          })),
+        ...getFarmAllocation({
+          allocPoint: poolInfos[index]?.allocPoint,
+          isRegular: poolInfos[index]?.isRegular,
+          totalRegularAllocPoint,
+          totalSpecialAllocPoint,
+        }),
+      }
+    } catch (error) {
+      console.error(error, farm, index, {
+        allocPoint: poolInfos[index]?.allocPoint,
+        isRegular: poolInfos[index]?.isRegular,
+        token0Decimals: farm.token.decimals,
+        token1Decimals: farm.quoteToken.decimals,
+        totalRegularAllocPoint,
+        totalSpecialAllocPoint,
+      })
+      throw error
+    }
+  })
+
+  const farmsDataWithPrices = getFarmsPrices(farmsData, chainId)
+
+  return farmsDataWithPrices
+}
+
+export async function farmV2FetchFarmsNew({
+  farms,
+  multicallv2,
+  isTestnet,
+  masterChefAddress,
+  chainId,
+  totalRegularAllocPoint,
+  totalSpecialAllocPoint,
+}: FetchFarmsParams) {
+  const stableFarms = farms.filter(isStableFarm)
+  const [stableFarmsResults, poolInfos, lpDataResults] = await Promise.all([
+    fetchStableFarmData(stableFarms, chainId, multicallv2),
+    fetchMasterChefData(farms, isTestnet, multicallv2, masterChefAddress),
+    fetchPublicFarmsDataNew(farms, chainId, multicallv2, masterChefAddress),
   ])
 
   const stableFarmsData = (stableFarmsResults as StableLpData[]).map(formatStableFarm)
