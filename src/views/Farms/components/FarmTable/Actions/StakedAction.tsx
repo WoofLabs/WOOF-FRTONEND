@@ -56,7 +56,7 @@ const StyledActionContainer = styled(ActionContainer)`
 
 export function useStakedActions(pid, lpContract) {
   const { account, chainId } = useActiveWeb3React()
-  const { onStake } = useStakeFarms(pid, lpContract)
+  const { onStake } = useStakeFarms(pid)
   const { onUnstake } = useUnstakeFarms(pid)
   const dispatch = useAppDispatch()
 
@@ -64,7 +64,7 @@ export function useStakedActions(pid, lpContract) {
 
   const onDone = useCallback(
     () => {
-      dispatch(fetchFarmUserDataAsyncNew({ account, pids: [pid], chainId }))
+      // dispatch(fetchFarmUserDataAsyncNew({ account, pids: [pid], chainId }))
       dispatch(fetchFarmUserDataAsync({ account, pids: [pid], chainId }))
     },
     [account, pid, chainId, dispatch],
@@ -80,7 +80,7 @@ export function useStakedActions(pid, lpContract) {
 
 export function useStakedActionsNew(pid, lpContract) {
   const { account, chainId } = useActiveWeb3React()
-  const { onStakeNew } = useStakeFarms(pid, lpContract)
+  const { onStakeNew } = useStakeFarms(pid)
   const { onUnstakeNew } = useUnstakeFarms(pid)
   const dispatch = useAppDispatch()
 
@@ -206,6 +206,7 @@ const Staked: React.FunctionComponent<React.PropsWithChildren<StackedActionProps
   const addLiquidityUrl = `${BASE_ADD_LIQUIDITY_URL}/${liquidityUrlPathParts}`
 
   const handleStake = async (amount: string) => {
+    await onApprove()
     const receipt = await fetchWithCatchTxError(() => {
       return onStake(amount)
     })
@@ -286,7 +287,7 @@ const Staked: React.FunctionComponent<React.PropsWithChildren<StackedActionProps
     )
   }
 
-  if (isApproved) {
+  // if (isApproved) {
     if (stakedBalance.gt(0)) {
       return (
         <StyledActionContainer>
@@ -347,37 +348,37 @@ const Staked: React.FunctionComponent<React.PropsWithChildren<StackedActionProps
         </ActionContent>
       </StyledActionContainer>
     )
-  }
+  // }
 
-  if (!userDataReady) {
-    return (
-      <StyledActionContainer>
-        <ActionTitles>
-          <Text bold textTransform="uppercase" color="textSubtle" fontSize="12px">
-            {t('Start Farming')}
-          </Text>
-        </ActionTitles>
-        <ActionContent>
-          <Skeleton width={180} marginBottom={28} marginTop={14} />
-        </ActionContent>
-      </StyledActionContainer>
-    )
-  }
+  // if (!userDataReady) {
+  //   return (
+  //     <StyledActionContainer>
+  //       <ActionTitles>
+  //         <Text bold textTransform="uppercase" color="textSubtle" fontSize="12px">
+  //           {t('Start Farming')}
+  //         </Text>
+  //       </ActionTitles>
+  //       <ActionContent>
+  //         <Skeleton width={180} marginBottom={28} marginTop={14} />
+  //       </ActionContent>
+  //     </StyledActionContainer>
+  //   )
+  // }
 
-  return (
-    <StyledActionContainer>
-      <ActionTitles>
-        <Text bold textTransform="uppercase" color="textSubtle" fontSize="12px">
-          {t('Enable Farm')}
-        </Text>
-      </ActionTitles>
-      <ActionContent>
-        <Button width="100%" disabled={pendingTx} onClick={handleApprove} variant="secondary">
-          {t('Enable')}
-        </Button>
-      </ActionContent>
-    </StyledActionContainer>
-  )
+  // return (
+  //   <StyledActionContainer>
+  //     <ActionTitles>
+  //       <Text bold textTransform="uppercase" color="textSubtle" fontSize="12px">
+  //         {t('Enable Farm')}
+  //       </Text>
+  //     </ActionTitles>
+  //     <ActionContent>
+  //       <Button width="100%" disabled={pendingTx} onClick={handleApprove} variant="secondary">
+  //         {t('Enable')}
+  //       </Button>
+  //     </ActionContent>
+  //   </StyledActionContainer>
+  // )
 }
 
 export default Staked

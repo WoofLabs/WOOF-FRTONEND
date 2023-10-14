@@ -62,6 +62,8 @@ const StakeAction: React.FC<React.PropsWithChildren<FarmCardActionsProps>> = ({
   const { boosterState } = useContext(YieldBoosterStateContext)
 
   const handleStake = async (amount: string) => {
+    await onApprove()
+    
     const receipt = await fetchWithCatchTxError(() => {
       return onStake(amount)
     })
@@ -152,13 +154,13 @@ const StakeAction: React.FC<React.PropsWithChildren<FarmCardActionsProps>> = ({
   }
 
   // TODO: Move this out to prevent unnecessary re-rendered
-  if (!isApproved) {
-    return (
-      <Button mt="8px" width="100%" disabled={pendingTx} onClick={handleApprove}>
-        {t('Enable Contract')}
-      </Button>
-    )
-  }
+  // if (!isApproved) {
+  //   return (
+  //     <Button mt="8px" width="100%" disabled={pendingTx} onClick={handleApprove}>
+  //       {t('Enable Contract')}
+  //     </Button>
+  //   )
+  // }
 
   return (
     <Flex justifyContent="space-between" alignItems="center">
