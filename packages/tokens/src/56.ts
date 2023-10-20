@@ -49,6 +49,14 @@ export const bscTokens = {
     'WOOF Labs',
     'https://www.woofsite.com/',
   ),
+  meow: new Token(
+    ChainId.BSC,
+    '0xf30e9f7d576ecd98533dd0fc786fbc87715d13f8',
+    18,
+    'MEOW',
+    'WOOF Labs',
+    'https://www.woofsite.com/',
+  ),
   syrup: new Token(
     ChainId.BSC,
     '0x009cF7bC57584b7998236eff51b98A168DceA9B0',

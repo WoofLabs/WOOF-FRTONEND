@@ -328,8 +328,11 @@ export const fetchFarmUserDataAsync = createAsyncThunk<
     }
     const poolLength = config.getState().farms.poolLength ?? (await fetchMasterChefFarmPoolLength(chainId))
     const farmsConfig = await getFarmConfig(chainId)
+    // const farmsCanFetch = farmsConfig.filter(
+    //   (farmConfig) => pids.includes(farmConfig.pid) && poolLength > farmConfig.pid,
+    // )
     const farmsCanFetch = farmsConfig.filter(
-      (farmConfig) => pids.includes(farmConfig.pid) && poolLength > farmConfig.pid,
+      (farmConfig) => pids.includes(farmConfig.pid) && 2 > farmConfig.pid,
     )
     if (proxyAddress && farmsCanFetch?.length) {
       const { normalFarms, farmsWithProxy } = splitProxyFarms(farmsCanFetch)

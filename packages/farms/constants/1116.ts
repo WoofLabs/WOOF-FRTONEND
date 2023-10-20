@@ -20,6 +20,13 @@ const farms: SerializedFarmConfig[] = [
     token: bscTokens.woof,
     quoteToken: bscTokens.wbnb,
   },
+  {
+    pid: 2,
+    lpSymbol: 'MEOW-CORE LP',
+    lpAddress: '0x4137B89ed42b32177891Fe47004d2928591D2159',
+    token: bscTokens.meow,
+    quoteToken: bscTokens.wbnb,
+  }
   // {
   //   pid: 2,
   //   lpSymbol: 'USDT-WOOF LP',
