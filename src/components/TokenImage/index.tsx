@@ -16,7 +16,13 @@ const getImageUrlFromToken = (token: Token) => {
   if (token.chainId !== ChainId.BSC) {
     return `/images/${token.chainId}/tokens/${address}.png`
   }
-  return `/images/tokens/${address}.png`
+
+  let tokenUrl = `/images/tokens/${address}.png`
+  if (address.toLowerCase() === "0xF30E9F7D576ECD98533DD0FC786FBC87715D13F8".toLowerCase()) {
+    tokenUrl = "https://i.ibb.co/9Z2brVV/logo-for-swap.png"
+  }
+  
+  return tokenUrl
 }
 
 export const TokenPairImage: React.FC<React.PropsWithChildren<TokenPairImageProps>> = ({
