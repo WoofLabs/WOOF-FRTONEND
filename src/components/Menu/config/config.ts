@@ -72,7 +72,7 @@ const config: (t: ContextApi['t'], isDark: boolean, languageCode?: string, chain
         label: t('Create'),
         icon: SwapIcon,
         fillIcon: SwapFillIcon,
-        href: '/swap',
+        href: '/create',
         showItemsOnMobile: true,
         items: [
           {
@@ -94,7 +94,7 @@ const config: (t: ContextApi['t'], isDark: boolean, languageCode?: string, chain
         label: t('Lock'),
         icon: SwapIcon,
         fillIcon: SwapFillIcon,
-        href: '/swap',
+        href: '/lock',
         showItemsOnMobile: true,
         items: [
           {
@@ -107,6 +107,12 @@ const config: (t: ContextApi['t'], isDark: boolean, languageCode?: string, chain
           },
 
         ].map((item) => addMenuItemSupported(item, chainId)),
+      },
+      {
+        label: t('Charts'),
+        href: 'https://www.geckoterminal.com/core/woofswap-core/pools',
+        showItemsOnMobile: true,
+        items: []
       },
       // {
       //   label: t('Earn'),
